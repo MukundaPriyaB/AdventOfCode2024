@@ -6,7 +6,7 @@ public class Solutions
 {
     static void Main(string[] args)
     {
-        AdditionOfDifferenceInList();
+        //AdditionOfDifferenceInList();
         NumberOfSafeReports();
     }
 
@@ -75,13 +75,14 @@ public class Solutions
     static void NumberOfSafeReports()
     {
 
-        //List<int> report = new List<int>();
+        List<int[]> allUnsafeReports = new List<int[]>();
         // day 2 part 1 and part 3
         int safeReportPart1 = 0;
         int unsafeReport = 0;
         int safeReportPart2 = 0;
 
         string filePath = "InputDay2Sample.txt";
+
         using (StreamReader reader = new StreamReader(filePath))
         {
             string line;
@@ -114,7 +115,16 @@ public class Solutions
                     {
                         //Console.WriteLine(report[i] + " " + report[i + 1]);
                         Console.WriteLine("equal values so unsafe report");
+                        Array.ForEach(report, Console.WriteLine);
                         unsafeReport++;
+                        if(unsafeReport == 1)
+                        {
+                            
+                            int indexToRemove = i;
+                            int[] newReport = report.Where((element, index) => index != indexToRemove).ToArray();
+
+                            allUnsafeReports.Add(newReport);
+                        }
 
                         //return; //why does it exit both loops?
 
@@ -126,9 +136,16 @@ public class Solutions
                         {
                             //Console.WriteLine(report[i] + " " + report[i + 1]);
                             Console.WriteLine("ascending unsafe report");
+                            Array.ForEach(report, Console.WriteLine);
                             unsafeReport++;
 
+                            if (unsafeReport == 1)
+                            {
 
+                                int indexToRemove = i;
+                                int[] newReport = report.Where((element, index) => index != indexToRemove).ToArray();
+                                allUnsafeReports.Add(newReport);
+                            }
                         }
                         else
                         {
@@ -142,8 +159,15 @@ public class Solutions
                         {
                             //Console.WriteLine(report[i] + " " + report[i + 1]);
                             Console.WriteLine("descending unsafe report");
+                            Array.ForEach(report, Console.WriteLine);
                             unsafeReport++;
+                            if (unsafeReport == 1)
+                            {
 
+                                int indexToRemove = i;
+                                int[] newReport = report.Where((element, index) => index != indexToRemove).ToArray();
+                                allUnsafeReports.Add(newReport);
+                            }
 
                         }
                         else
@@ -155,13 +179,6 @@ public class Solutions
 
 
                 }
-                //Console.WriteLine(unsafeReport);
-                //if ((conditionMet == (report.Length - 1)) || ((conditionMet == (report.Length - 2)) && (unsafeReport == 1)))
-                //{
-                //    Console.WriteLine("safe report");
-                //    safeReportPart2++;
-
-                //}
 
                 if (conditionMet == (report.Length - 1))
                 {
@@ -173,8 +190,101 @@ public class Solutions
         }
         Console.WriteLine(" safe report part 1 " + safeReportPart1);
 
-        Console.WriteLine(" safe report part 2 " + safeReportPart2);
+        Console.WriteLine(" all unsafeReports length " + allUnsafeReports.Count);
+        int extraSafeReports = 0;
+        if (allUnsafeReports.Count > 0)
+        {
+            extraSafeReports = RecheckUnSafeReports(allUnsafeReports);              
+        }
+        Console.WriteLine(" all safeReports " + (safeReportPart1 + extraSafeReports));
+
     }
+
+    static int RecheckUnSafeReports(List <int[]> allUnsafeReports)
+    {
+        int safeReport = 0;
+        foreach (int[] report in allUnsafeReports)
+        {
+            bool isTheListAscending = false;
+            bool isTheListDescending = false;
+            bool isTheListEqual = false;
+            if (report[0] < report[1])
+            {
+                isTheListAscending = true;
+            }
+            else if (report[0] > report[1])
+            {
+                isTheListDescending = true;
+            }
+            else
+            {
+                isTheListEqual = true;
+            }
+            int conditionMet = 0;
+            int unsafeReport = 0;
+            for (int i = 0; i < (report.Length - 1); i++)
+            {
+
+                if (isTheListEqual)
+                {
+                    //Console.WriteLine(report[i] + " " + report[i + 1]);
+                    Console.WriteLine("equal values so unsafe report");
+                    Array.ForEach(report, Console.WriteLine);
+                    unsafeReport++;
+
+                    //return; //why does it exit both loops?
+
+                }
+                else if (isTheListAscending)
+                {
+                    if (!((report[i] < report[i + 1]) && ((report[i + 1] - report[i]) <= 3)))
+
+                    {
+                        //Console.WriteLine(report[i] + " " + report[i + 1]);
+                        Console.WriteLine("ascending unsafe report");
+                        Array.ForEach(report, Console.WriteLine);
+                        unsafeReport++;
+
+
+                    }
+                    else
+                    {
+                        conditionMet++;
+                    }
+
+                }
+                else if (isTheListDescending)
+                {
+                    if (!((report[i] > report[i + 1]) && ((report[i] - report[i + 1]) <= 3)))
+                    {
+                        //Console.WriteLine(report[i] + " " + report[i + 1]);
+                        Console.WriteLine("descending unsafe report");
+                        Array.ForEach(report, Console.WriteLine);
+                        unsafeReport++;
+
+
+                    }
+                    else
+                    {
+                        conditionMet++;
+                    }
+                }
+
+            }
+
+            if (conditionMet == (report.Length - 1))
+            {
+                Console.WriteLine("safe report");
+                safeReport++;
+
+            }
+
+        }
+        Console.WriteLine("the extra number of safe reports : " + safeReport);
+        return safeReport;
+
+    }
+
 
 }
 

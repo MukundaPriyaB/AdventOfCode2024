@@ -8,18 +8,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="InputDay1.txt">
+    <None Remove="InputDay1.txt" />
+    <None Remove="InputDay1Sample.txt" />
+    <None Remove="InputDay2.txt" />
+    <None Remove="InputDay2Sample.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="InputDay1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="InputDay1Sample.txt">
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputDay1Sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="InputDay2.txt">
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputDay2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="InputDay2Sample.txt">
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputDay2Sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

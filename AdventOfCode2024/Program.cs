@@ -89,7 +89,7 @@ public class Solutions
             while ((line = reader.ReadLine()) != null)
             {
                 string[] partsWithoutEmpty = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                int[] report = partsWithoutEmpty.Select(int.Parse).ToArray();
+                int[] report = partsWithoutEmpty.Select(int.Parse).ToArray(); // doesnt allow convert.toInt , why?
                 bool isTheListAscending = false;
                 bool isTheListDescending = false;
                 bool isTheListEqual = false;
@@ -155,25 +155,27 @@ public class Solutions
 
 
                 }
-                Console.WriteLine(unsafeReport);
-                if ((conditionMet == (report.Length - 1)) || ((conditionMet == (report.Length - 2)) && (unsafeReport == 1)))
-                {
-                    Console.WriteLine("safe report");
-                    safeReportPart2++;
-
-                }
-
-                //if (conditionMet == (report.Length - 1))
+                //Console.WriteLine(unsafeReport);
+                //if ((conditionMet == (report.Length - 1)) || ((conditionMet == (report.Length - 2)) && (unsafeReport == 1)))
                 //{
                 //    Console.WriteLine("safe report");
-                //    safeReportPart1++;
+                //    safeReportPart2++;
 
                 //}
+
+                if (conditionMet == (report.Length - 1))
+                {
+                    Console.WriteLine("safe report");
+                    safeReportPart1++;
+
+                }
             }
         }
+        Console.WriteLine(" safe report part 1 " + safeReportPart1);
 
         Console.WriteLine(" safe report part 2 " + safeReportPart2);
     }
 
 }
+
 

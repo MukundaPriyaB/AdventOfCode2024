@@ -7,11 +7,14 @@ public class Solutions
     static void Main(string[] args)
     {
         AdditionOfDifferenceInList();
+        NumberOfSafeReports();
     }
 
+
+    //day 1 puzzle code
     static void AdditionOfDifferenceInList()
     {
-
+        //day 1 part 1
 
         List<int> leftSideList = new List<int>();
         List<int> rightSideList = new List<int>();
@@ -20,7 +23,6 @@ public class Solutions
         int i2;
 
         string filePath = "InputDay1.txt";
-        //string filePath = "C:\\workspace\\dotNetProjects\\AdevntOfCode2024InputTexts\\Day1Part1.txt";
 
         using (StreamReader reader = new StreamReader(filePath))
         {
@@ -50,8 +52,9 @@ public class Solutions
             sumOfTheDifferences += differenceOfValues;
         }
 
-        Console.WriteLine("sum of the difference is "+ sumOfTheDifferences);
+        Console.WriteLine("sum of the difference is " + sumOfTheDifferences);
 
+        // day 1 part 2
         // similarity score
 
         int count = 0;
@@ -63,10 +66,114 @@ public class Solutions
             similarityScore = num * count;
             totalCount += similarityScore;
 
-        } 
+        }
 
         Console.WriteLine("sum of similarity score is " + totalCount);
-   }
+    }
 
+    //day2 puzzle code
+    static void NumberOfSafeReports()
+    {
+
+        //List<int> report = new List<int>();
+        // day 2 part 1 and part 3
+        int safeReportPart1 = 0;
+        int unsafeReport = 0;
+        int safeReportPart2 = 0;
+
+        string filePath = "InputDay2Sample.txt";
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string line;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] partsWithoutEmpty = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                int[] report = partsWithoutEmpty.Select(int.Parse).ToArray();
+                bool isTheListAscending = false;
+                bool isTheListDescending = false;
+                bool isTheListEqual = false;
+                if (report[0] < report[1])
+                {
+                    isTheListAscending = true;
+                }
+                else if (report[0] > report[1])
+                {
+                    isTheListDescending = true;
+                }
+                else
+                {
+                    isTheListEqual = true;
+                }
+                int conditionMet = 0;
+                unsafeReport = 0;
+                for (int i = 0; i < (report.Length - 1); i++)
+                {
+
+                    if (isTheListEqual)
+                    {
+                        //Console.WriteLine(report[i] + " " + report[i + 1]);
+                        Console.WriteLine("equal values so unsafe report");
+                        unsafeReport++;
+
+                        //return; //why does it exit both loops?
+
+                    }
+                    else if (isTheListAscending)
+                    {
+                        if (!((report[i] < report[i + 1]) && ((report[i + 1] - report[i]) <= 3)))
+
+                        {
+                            //Console.WriteLine(report[i] + " " + report[i + 1]);
+                            Console.WriteLine("ascending unsafe report");
+                            unsafeReport++;
+
+
+                        }
+                        else
+                        {
+                            conditionMet++;
+                        }
+
+                    }
+                    else if (isTheListDescending)
+                    {
+                        if (!((report[i] > report[i + 1]) && ((report[i] - report[i + 1]) <= 3)))
+                        {
+                            //Console.WriteLine(report[i] + " " + report[i + 1]);
+                            Console.WriteLine("descending unsafe report");
+                            unsafeReport++;
+
+
+                        }
+                        else
+                        {
+                            conditionMet++;
+                        }
+                    }
+
+
+
+                }
+                Console.WriteLine(unsafeReport);
+                if ((conditionMet == (report.Length - 1)) || ((conditionMet == (report.Length - 2)) && (unsafeReport == 1)))
+                {
+                    Console.WriteLine("safe report");
+                    safeReportPart2++;
+
+                }
+
+                //if (conditionMet == (report.Length - 1))
+                //{
+                //    Console.WriteLine("safe report");
+                //    safeReportPart1++;
+
+                //}
+            }
+        }
+
+        Console.WriteLine(" safe report part 2 " + safeReportPart2);
+    }
 
 }
+

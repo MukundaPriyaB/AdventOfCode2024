@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
 public class Solutions
@@ -7,7 +8,8 @@ public class Solutions
     static void Main(string[] args)
     {
         //AdditionOfDifferenceInList();
-        NumberOfSafeReports();
+        //NumberOfSafeReports();
+        AdditionOfMultiplicationOutput();
     }
 
 
@@ -267,7 +269,24 @@ public class Solutions
 
     }
 
+    public static void AdditionOfMultiplicationOutput()
+    {
+        string filePath = "InputDay3Sample.txt";
+        string fileContent = File.ReadAllText(filePath);
+        Console.WriteLine($"Original string: {fileContent}");
+
+        string input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)";
+        string pattern = @"mul\(\d+,\d+\)"; ; // Matches one or more digits
+
+
+        Console.WriteLine($"Original string: {input}");
+
+        // Another approach: Extract only the "mul()" occurrences
+        string extractedMul = string.Join("", Regex.Matches(input, pattern));
+        Console.WriteLine($"Extracted mul(): {extractedMul}");
+    }
 
 }
+
 
 

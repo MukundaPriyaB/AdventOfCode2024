@@ -271,22 +271,68 @@ public class Solutions
 
     public static void AdditionOfMultiplicationOutput()
     {
-        string filePath = "InputDay3Sample.txt";
+        string filePath = "InputDay3.txt";
         string fileContent = File.ReadAllText(filePath);
         Console.WriteLine($"Original string: {fileContent}");
 
-        string input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)";
-        string pattern = @"mul\(\d+,\d+\)"; ; // Matches one or more digits
+       // string input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)";
+        string pattern = @"mul\(\d+,\d+\)"; // Matches one or more digits
 
 
-        Console.WriteLine($"Original string: {input}");
+        Console.WriteLine($"Original string: {fileContent}");   
 
-        // Another approach: Extract only the "mul()" occurrences
-        string extractedMul = string.Join("", Regex.Matches(input, pattern));
+        // Extract only the "mul()" occurrences
+        string extractedMul = string.Join("", Regex.Matches(fileContent, pattern));
         Console.WriteLine($"Extracted mul(): {extractedMul}");
+        //mul(2,4)mul(5,5)
+
+        double sum = 0;
+        double multipliedValue = 0;
+
+        string numPattern = @"\d+";
+        List<double> numbers = new List<double>();
+        List<double> numbers2 = new List<double>();
+        bool odd = true;
+
+        MatchCollection matches = Regex.Matches(extractedMul, @"\d+");
+
+        foreach (Match match in matches)
+        {
+            //Console.WriteLine(match.Value);
+            if (double.TryParse(match.Value, out double num) && odd)
+            {
+
+                numbers.Add(num);
+                odd = false;
+            }
+            else if (double.TryParse(match.Value, out double num2) && !odd)
+            {
+                numbers2.Add(num2);
+                odd = true;
+            }
+
+        }
+        //foreach(double n in numbers){
+        //    Console.WriteLine($"odd numbers {n}");
+        //}
+        //foreach (double n2 in numbers2) { 
+        //    Console.WriteLine($"even numbers {n2}");
+        //}
+
+        for (int i =0; i<numbers.Count; i++)
+        {
+            for (int j = 0; j<numbers2.Count; j++)
+            {
+                if ( i == j) {
+                    multipliedValue = numbers[i] * numbers2[j];
+                    sum = sum + multipliedValue;
+                }
+            }
+        }
+       
+        Console.WriteLine(sum);
     }
 
+
 }
-
-
 

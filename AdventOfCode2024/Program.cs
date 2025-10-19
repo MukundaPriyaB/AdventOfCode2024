@@ -273,18 +273,59 @@ public class Solutions
     {
         string filePath = "InputDay3.txt";
         string fileContent = File.ReadAllText(filePath);
-        Console.WriteLine($"Original string: {fileContent}");
+        //Console.WriteLine($"Original string: {fileContent}");
 
-       // string input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)";
-        string pattern = @"mul\(\d+,\d+\)"; // Matches one or more digits
-
-
-        Console.WriteLine($"Original string: {fileContent}");   
+        string pattern = @"mul\(\d+,\d+\)"; // Matches one or more digits  
 
         // Extract only the "mul()" occurrences
         string extractedMul = string.Join("", Regex.Matches(fileContent, pattern));
-        Console.WriteLine($"Extracted mul(): {extractedMul}");
+        //Console.WriteLine($"Extracted mul(): {extractedMul}");
         //mul(2,4)mul(5,5)
+        MultiplyTwoValuesFromSTring(extractedMul);
+
+        //PART2
+        //do and dont 
+
+        string input2 = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
+        
+        string pattern2 = @"(do\(\)|don't\(\)|mul\(\d+,\d+\))";
+
+        string extractedMulAndDos = string.Join("", Regex.Matches(fileContent, pattern2));
+        //Console.WriteLine($"Extracted mul() with dos and dont: {extractedMulAndDos}");
+
+        string originalText = extractedMulAndDos;
+        string numPattern2 = @"don't\(\)(.*?)do\(\)";
+        string replacement = "";
+        string newText = Regex.Replace(originalText, numPattern2, replacement, RegexOptions.IgnoreCase);
+
+        //Console.WriteLine("==========================");
+
+        //Console.WriteLine(newText);
+
+        originalText = newText;
+        numPattern2 = @"do\(\)";
+        replacement = "";
+        newText = Regex.Replace(originalText, numPattern2,replacement, RegexOptions.IgnoreCase);
+
+        //Console.WriteLine("===========================================");
+        //Console.WriteLine(newText);
+        //Console.WriteLine("===========================================");
+        newText += "end";
+
+        originalText = newText;
+        numPattern2 = @"don't\(\)(.*?)end";
+        replacement = "";
+        newText = Regex.Replace(originalText, numPattern2, replacement, RegexOptions.IgnoreCase);
+        //Console.WriteLine("===========================================");
+        //Console.WriteLine(newText);
+        //Console.WriteLine("===========================================");
+        MultiplyTwoValuesFromSTring(newText);
+
+
+    }
+
+    public static double MultiplyTwoValuesFromSTring(string extractedMul)
+    {
 
         double sum = 0;
         double multipliedValue = 0;
@@ -298,7 +339,6 @@ public class Solutions
 
         foreach (Match match in matches)
         {
-            //Console.WriteLine(match.Value);
             if (double.TryParse(match.Value, out double num) && odd)
             {
 
@@ -312,26 +352,23 @@ public class Solutions
             }
 
         }
-        //foreach(double n in numbers){
-        //    Console.WriteLine($"odd numbers {n}");
-        //}
-        //foreach (double n2 in numbers2) { 
-        //    Console.WriteLine($"even numbers {n2}");
-        //}
 
-        for (int i =0; i<numbers.Count; i++)
+        for (int i = 0; i < numbers.Count; i++)
         {
-            for (int j = 0; j<numbers2.Count; j++)
+            for (int j = 0; j < numbers2.Count; j++)
             {
-                if ( i == j) {
+                if (i == j)
+                {
                     multipliedValue = numbers[i] * numbers2[j];
                     sum = sum + multipliedValue;
                 }
             }
         }
-       
+
         Console.WriteLine(sum);
+        return sum;
     }
+
 
 
 }

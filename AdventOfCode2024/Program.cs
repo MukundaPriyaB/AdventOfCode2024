@@ -387,27 +387,27 @@ public class Solutions
         //{ "S","A","X","A","M","A","S","A","A","A"},
         //{ "M","A","M","M","M","X","M","M","M","M"},
         //{ "M","X","M","X","A","X","M","A","S","X"}
-        
+
         //};
 
-        string filePath = "InputDay4.txt"; 
+        string filePath = "InputDay4.txt";
         string[] lines = File.ReadAllLines(filePath);
 
 
         string[] firstLineParts = lines[0].Select(c => c.ToString()).ToArray();
         int numRows = lines.Length;
         int numCols = firstLineParts.Length;
-            
+
         string[,] grid1 = new string[numRows, numCols];
 
         for (int i = 0; i < numRows; i++)
+        {
+            string[] parts = lines[i].Select(c => c.ToString()).ToArray();
+            for (int j = 0; j < numCols; j++)
             {
-                string[] parts = lines[i].Select(c => c.ToString()).ToArray();
-                for (int j = 0; j < numCols; j++)
-                {
                 grid1[i, j] = parts[j];
-                }
             }
+        }
 
         /*
          HORIZONTAL:
@@ -423,9 +423,7 @@ public class Solutions
         i,j-1 == s
         i,j+1 ==m
         i,j+2 ==x  
-
-         */
-        /*
+        
 
         VERICAL:
             X  (i-1, i-2, i+1 not null)
@@ -446,9 +444,8 @@ public class Solutions
             i, j ==a
             i-1, j==s
             i+1, j ==m
-            i+2, j ==x*/
+            i+2, j ==x
 
-                    /*
 
             DIAGNAL:
 
@@ -503,19 +500,20 @@ public class Solutions
 
         int inputColumns = grid1.GetLength(1);
 
-        for (int i = 0; i < inputRows; i++) 
+        for (int i = 0; i < inputRows; i++)
         {
-            for(int j =0; j< inputColumns; j++)
+            for (int j = 0; j < inputColumns; j++)
             {
 
-                if((j - 1)>=0 && (j - 2) >= 0 && (j + 1) < inputColumns)
+                if ((j - 1) >= 0 && (j - 2) >= 0 && (j + 1) < inputColumns)
                 {
                     if (grid1[i, j] == "A" && grid1[i, j - 1] == "M" && grid1[i, j - 2] == "X" && grid1[i, j + 1] == "S")
                     {
                         countH++;
                     }
                 }
-                if ((j - 1) >= 0 && (j + 1) < inputColumns && (j + 2) < inputColumns) {
+                if ((j - 1) >= 0 && (j + 1) < inputColumns && (j + 2) < inputColumns)
+                {
                     if (grid1[i, j] == "A" && grid1[i, j - 1] == "S" && grid1[i, j + 1] == "M" && grid1[i, j + 2] == "X")
                     {
                         countH++;
@@ -524,14 +522,14 @@ public class Solutions
 
                 if ((i - 1) >= 0 && (i - 2) >= 0 && (i + 1) < inputRows)
                 {
-                    if (grid1[i, j] == "A" && grid1[i-1, j] == "M" && grid1[i-2, j] == "X" && grid1[i+1, j] == "S")
+                    if (grid1[i, j] == "A" && grid1[i - 1, j] == "M" && grid1[i - 2, j] == "X" && grid1[i + 1, j] == "S")
                     {
                         countV++;
                     }
                 }
                 if ((i - 1) >= 0 && (i + 1) < inputRows && (i + 2) < inputRows)
                 {
-                    if (grid1[i, j] == "A" && grid1[i-1, j] == "S" && grid1[i+1, j] == "M" && grid1[i+2, j] == "X")
+                    if (grid1[i, j] == "A" && grid1[i - 1, j] == "S" && grid1[i + 1, j] == "M" && grid1[i + 2, j] == "X")
                     {
                         countV++;
                     }
@@ -554,9 +552,9 @@ public class Solutions
                         countD++;
                     }
                 }
-                if ((i - 1) >= 0 && (i + 1) < inputRows && (i + 2) < inputRows && (j - 1) >= 0 && (j + 1) < inputColumns && (j+2) < inputColumns)
+                if ((i - 1) >= 0 && (i + 1) < inputRows && (i + 2) < inputRows && (j - 1) >= 0 && (j + 1) < inputColumns && (j + 2) < inputColumns)
                 {
-                    if (grid1[i, j] == "A" && grid1[i+1, j + 1] == "M" && grid1[i + 2, j + 2] == "X" && grid1[i -1, j - 1] == "S")
+                    if (grid1[i, j] == "A" && grid1[i + 1, j + 1] == "M" && grid1[i + 2, j + 2] == "X" && grid1[i - 1, j - 1] == "S")
                     {
                         countD++;
                     }
@@ -572,10 +570,89 @@ public class Solutions
             }
         }
         Console.WriteLine($"Horizontal: {countH}, Vertical: {countV}, Diagnol: {countD}");
-        Console.WriteLine(countH+countD+countV);
+        Console.WriteLine(countH + countD + countV);
 
+        //part 2
+        int countMAS = 0;
 
-        
+        for (int i = 0; i < inputRows; i++)
+        {
+            for (int j = 0; j < inputColumns; j++)
+            {
+                if ((i - 1)>=0 && (j - 1) >=0 && (j + 1) <inputColumns && (i + 1) <inputRows)
+                {
+                    /*
+                    M.M
+                    .A.
+                    S.S
+
+                    i,j = a
+                    i-1, j-1 = m
+                    i-1, j+1 =m
+                    i+1, j-1 = s
+                    i+1, j+1 = s
+                     */
+
+                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "M" && grid1[i -1, j +1] == "M" && grid1[i + 1, j - 1] == "S" && grid1[i + 1, j + 1] == "S")
+                    {
+                        countMAS++;
+                    }
+                    /*
+                    S.S
+                    .A.
+                    M.M
+
+                    i, j =a
+                    i-1, j-1 = s
+                    i-1, j+1 =s
+                    i+1, j-1 = m
+                    i+1, j+1 = m
+                     */
+                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "S" && grid1[i - 1, j + 1] == "S" && grid1[i + 1, j - 1] == "M" && grid1[i + 1, j + 1] == "M")
+                    {
+                        countMAS++;
+                    }
+
+                    /*
+                    M.S
+                    .A.
+                    M.S
+
+                    i, j =a
+                    i-1, j-1 = m
+                    i-1, j+1 =s
+                    i+1, j-1 = m
+                    i+1, j+1 = s
+                    
+                     */
+                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "M" && grid1[i - 1, j + 1] == "S" && grid1[i + 1, j - 1] == "M" && grid1[i + 1, j + 1] == "S")
+                    {
+                        countMAS++;
+                    }
+
+                    /*
+                    S.M
+                    .A.
+                    S.M
+
+                    i, j =a
+                    i-1, j-1 = s
+                    i-1, j+1 =m
+                    i+1, j-1 = s
+                    i+1, j+1 = m
+                    */
+                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "S" && grid1[i - 1, j + 1] == "M" && grid1[i + 1, j - 1] == "S" && grid1[i + 1, j + 1] == "M")
+                    {
+                        countMAS++;
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine("part 2 MAS number is :" + countMAS);
+    
+    
+    
     }
 
 

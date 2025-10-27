@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -9,7 +10,9 @@ public class Solutions
     {
         //AdditionOfDifferenceInList();
         //NumberOfSafeReports();
-        AdditionOfMultiplicationOutput();
+        //AdditionOfMultiplicationOutput();
+        GridPatternMatching();
+
     }
 
 
@@ -112,14 +115,14 @@ public class Solutions
                 int safeReportExtra = 0;
                 for (int i = 0; i < (report.Length - 1); i++)
                 {
-                    
+
 
                     if (isTheListEqual)
                     {
                         unsafeReport++;
-                        if(unsafeReport == 1)
+                        if (unsafeReport == 1)
                         {
-                            for (int j = 0; j< (report.Length); j++)
+                            for (int j = 0; j < (report.Length); j++)
                             {
                                 int[] newReport3 = report.Where((element, index) => index != j).ToArray();
                                 allUnsafeReportsSmall.Add(newReport3);
@@ -187,9 +190,9 @@ public class Solutions
                 }
                 if (safeReportExtra >= 1)
                 {
-                    safeReport ++;
+                    safeReport++;
                 }
-                
+
             }
         }
         Console.WriteLine(" safe reports " + safeReport);
@@ -197,7 +200,7 @@ public class Solutions
 
     }
 
-    static int RecheckUnSafeReports(List <int[]> allUnsafeReports)
+    static int RecheckUnSafeReports(List<int[]> allUnsafeReports)
     {
         int safeReport = 0;
         foreach (int[] report in allUnsafeReports)
@@ -287,7 +290,7 @@ public class Solutions
         //do and dont 
 
         string input2 = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
-        
+
         string pattern2 = @"(do\(\)|don't\(\)|mul\(\d+,\d+\))";
 
         string extractedMulAndDos = string.Join("", Regex.Matches(fileContent, pattern2));
@@ -305,7 +308,7 @@ public class Solutions
         originalText = newText;
         numPattern2 = @"do\(\)";
         replacement = "";
-        newText = Regex.Replace(originalText, numPattern2,replacement, RegexOptions.IgnoreCase);
+        newText = Regex.Replace(originalText, numPattern2, replacement, RegexOptions.IgnoreCase);
 
         //Console.WriteLine("===========================================");
         //Console.WriteLine(newText);
@@ -367,6 +370,212 @@ public class Solutions
 
         Console.WriteLine(sum);
         return sum;
+    }
+
+    //day 4
+    public static void GridPatternMatching()
+    {
+        //string[,] grid1 = {
+
+        //{ "M","M","M","S","X","X","M","A","S","M" },
+        //{ "M","S","A","M","X","M","S","M","S","A" },
+        //{ "A","M","X","S","X","M","A","A","M","M"},
+        //{ "M","S","A","M","A","S","M","S","M","X"},
+        //{ "X","M","A","S","A","M","X","A","M","M"},
+        //{ "X","X","A","M","M","X","X","A","M","A"},
+        //{ "S","M","S","M","S","A","S","X","S","S"},
+        //{ "S","A","X","A","M","A","S","A","A","A"},
+        //{ "M","A","M","M","M","X","M","M","M","M"},
+        //{ "M","X","M","X","A","X","M","A","S","X"}
+        
+        //};
+
+        string filePath = "InputDay4.txt"; 
+        string[] lines = File.ReadAllLines(filePath);
+
+
+        string[] firstLineParts = lines[0].Select(c => c.ToString()).ToArray();
+        int numRows = lines.Length;
+        int numCols = firstLineParts.Length;
+            
+        string[,] grid1 = new string[numRows, numCols];
+
+        for (int i = 0; i < numRows; i++)
+            {
+                string[] parts = lines[i].Select(c => c.ToString()).ToArray();
+                for (int j = 0; j < numCols; j++)
+                {
+                grid1[i, j] = parts[j];
+                }
+            }
+
+        /*
+         HORIZONTAL:
+
+        XMAS : (j-1,j-2,j+1 all !null]
+        i,j ==a
+        i, j-1 ==m
+        i,j-2 ==x
+        i,j+1 ==s
+
+        SAMX [j-1,j+1,j+2 all !null)
+        i, j ==a
+        i,j-1 == s
+        i,j+1 ==m
+        i,j+2 ==x  
+
+         */
+        /*
+
+        VERICAL:
+            X  (i-1, i-2, i+1 not null)
+            M
+            A
+            S
+
+            i,j == a
+            i-1,j == m
+            i-2, j ==x
+            i+1, j ==s
+
+            S  (i-1, i+1,i+2 not null)
+            A
+            M
+            X
+
+            i, j ==a
+            i-1, j==s
+            i+1, j ==m
+            i+2, j ==x*/
+
+                    /*
+
+            DIAGNAL:
+
+            X...	(i-1, j-1, i-2, j-2, i+1, j+1)
+            .M..
+            ..A.
+            ...S
+
+            i,j ==a
+            i-1,j-1 ==m
+            i-2,j-2 ==x
+            i+1,j+1== s
+
+
+            ...S	(i-1, j+1, i+1, j-1, i+2, j-2)
+            ..A.
+            .M..
+            X...
+
+            i,j==a
+            i-1, j+1 ==s
+            i+1 j-1 ==m
+            i+2, j-2 ==x
+
+
+            S... ( i+1, i+2, i-1, j+1, j+2, j-1)
+            .A..
+            ..M
+            ...X
+
+            i, j = a 
+            i+1, j+1 = m
+            i+2, j+2 = x
+            i-1, j-1 = s
+
+            ...X (i+1,i-1,i-2,j -1,j+1,j+2 )
+            ..M.
+            .A..
+            S...
+
+
+            i, j = a 
+            i+1, j -1 == s
+            i-1, j+1 = m
+            i-2, j+2 = x
+            */
+        int countH = 0;
+        int countV = 0;
+        int countD = 0;
+
+        int inputRows = grid1.GetLength(0);
+
+        int inputColumns = grid1.GetLength(1);
+
+        for (int i = 0; i < inputRows; i++) 
+        {
+            for(int j =0; j< inputColumns; j++)
+            {
+
+                if((j - 1)>=0 && (j - 2) >= 0 && (j + 1) < inputColumns)
+                {
+                    if (grid1[i, j] == "A" && grid1[i, j - 1] == "M" && grid1[i, j - 2] == "X" && grid1[i, j + 1] == "S")
+                    {
+                        countH++;
+                    }
+                }
+                if ((j - 1) >= 0 && (j + 1) < inputColumns && (j + 2) < inputColumns) {
+                    if (grid1[i, j] == "A" && grid1[i, j - 1] == "S" && grid1[i, j + 1] == "M" && grid1[i, j + 2] == "X")
+                    {
+                        countH++;
+                    }
+                }
+
+                if ((i - 1) >= 0 && (i - 2) >= 0 && (i + 1) < inputRows)
+                {
+                    if (grid1[i, j] == "A" && grid1[i-1, j] == "M" && grid1[i-2, j] == "X" && grid1[i+1, j] == "S")
+                    {
+                        countV++;
+                    }
+                }
+                if ((i - 1) >= 0 && (i + 1) < inputRows && (i + 2) < inputRows)
+                {
+                    if (grid1[i, j] == "A" && grid1[i-1, j] == "S" && grid1[i+1, j] == "M" && grid1[i+2, j] == "X")
+                    {
+                        countV++;
+                    }
+                }
+
+                if ((i - 1) >= 0 && (i - 2) >= 0 && (i + 1) < inputRows && (j - 1) >= 0 && (j - 2) >= 0 && (j + 1) < inputColumns)
+                {
+
+                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "M" && grid1[i - 2, j - 2] == "X" && grid1[i + 1, j + 1] == "S")
+                    {
+                        countD++;
+                    }
+
+
+                }
+                if ((i - 1) >= 0 && (i + 1) < inputRows && (i + 2) < inputRows && (j - 1) >= 0 && (j + 1) < inputColumns && (j - 2) >= 0)
+                {
+                    if (grid1[i, j] == "A" && grid1[i - 1, j + 1] == "S" && grid1[i + 1, j - 1] == "M" && grid1[i + 2, j - 2] == "X")
+                    {
+                        countD++;
+                    }
+                }
+                if ((i - 1) >= 0 && (i + 1) < inputRows && (i + 2) < inputRows && (j - 1) >= 0 && (j + 1) < inputColumns && (j+2) < inputColumns)
+                {
+                    if (grid1[i, j] == "A" && grid1[i+1, j + 1] == "M" && grid1[i + 2, j + 2] == "X" && grid1[i -1, j - 1] == "S")
+                    {
+                        countD++;
+                    }
+                }
+                if ((i - 1) >= 0 && (i + 1) < inputRows && (i - 2) >= 0 && (j - 1) >= 0 && (j + 1) < inputColumns && (j + 2) < inputColumns)
+                {
+                    if (grid1[i, j] == "A" && grid1[i + 1, j - 1] == "S" && grid1[i - 1, j + 1] == "M" && grid1[i - 2, j + 2] == "X")
+                    {
+                        countD++;
+                    }
+                }
+
+            }
+        }
+        Console.WriteLine($"Horizontal: {countH}, Vertical: {countV}, Diagnol: {countD}");
+        Console.WriteLine(countH+countD+countV);
+
+
+        
     }
 
 

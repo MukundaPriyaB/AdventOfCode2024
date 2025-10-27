@@ -14,6 +14,8 @@
     <None Remove="InputDay2Sample.txt" />
     <None Remove="InputDay3.txt" />
     <None Remove="InputDay3Sample.txt" />
+    <None Remove="InputDay4.txt" />
+    <None Remove="InputDay4Sample.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +35,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="InputDay3Sample.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputDay4.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputDay4Sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

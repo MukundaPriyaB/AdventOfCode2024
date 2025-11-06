@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
@@ -11,7 +12,8 @@ public class Solutions
         //AdditionOfDifferenceInList();
         //NumberOfSafeReports();
         //AdditionOfMultiplicationOutput();
-        GridPatternMatching();
+        //GridPatternMatching();
+        ElfRecordOrdering();
 
     }
 
@@ -579,7 +581,7 @@ public class Solutions
         {
             for (int j = 0; j < inputColumns; j++)
             {
-                if ((i - 1)>=0 && (j - 1) >=0 && (j + 1) <inputColumns && (i + 1) <inputRows)
+                if ((i - 1) >= 0 && (j - 1) >= 0 && (j + 1) < inputColumns && (i + 1) < inputRows)
                 {
                     /*
                     M.M
@@ -593,7 +595,7 @@ public class Solutions
                     i+1, j+1 = s
                      */
 
-                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "M" && grid1[i -1, j +1] == "M" && grid1[i + 1, j - 1] == "S" && grid1[i + 1, j + 1] == "S")
+                    if (grid1[i, j] == "A" && grid1[i - 1, j - 1] == "M" && grid1[i - 1, j + 1] == "M" && grid1[i + 1, j - 1] == "S" && grid1[i + 1, j + 1] == "S")
                     {
                         countMAS++;
                     }
@@ -650,12 +652,96 @@ public class Solutions
         }
 
         Console.WriteLine("part 2 MAS number is :" + countMAS);
-    
-    
-    
+
+
+
     }
 
 
+    public static void ElfRecordOrdering()
+    {
+        string filePath = "InputDay5.txt"; // change it in 2 places
+        string fileContent = File.ReadAllText(filePath);
 
+        String[] rulesAndInputs = fileContent.Split("\r\n\r\n");
+
+        String rules = rulesAndInputs[0];
+        String[] records = rulesAndInputs[1].Split("\r\n");
+
+        bool isSorted = true;
+
+        double sum = 0;
+
+        double middlePage = 0;
+
+        List<String> wrongOrderedRecords = new List<string>();
+
+        foreach (String record in records)
+        {
+            String[] inputLine = record.Split(",");
+            String[] original = inputLine;
+            for (int i = 0; i < original.Length - 1; i++)
+            {
+                if (new ElfRulesComparer().Compare(original[i], original[i + 1]) > 0)
+                {
+                    isSorted = false;
+                    break;
+                }
+            }
+            if (isSorted)
+            {
+                middlePage = Double.Parse(original[(original.Length - 1) / 2]); // because index values start from 0; 3rd element index is 2
+
+                //Console.WriteLine("Middle Page is " + middlePage);
+                sum += middlePage;
+            }
+            else
+            {
+                wrongOrderedRecords.Add(record);
+            }
+            isSorted = true;
+
+        }
+
+        Console.WriteLine("sum of correctly ordered lists :" + sum);
+
+        double correctedSum = 0;
+        foreach (String record in wrongOrderedRecords)
+        {
+            String[] inputLine = record.Split(",");
+            String[] original = inputLine;
+            Array.Sort(original, new ElfRulesComparer());
+            middlePage = Double.Parse(original[(original.Length - 1) / 2]); // because index values start from 0; 3rd element index is 2
+            //Console.WriteLine("Middle Page Corrected is " + middlePage);
+            correctedSum += middlePage;
+
+        }
+        Console.WriteLine("sum of wrongly ordered lists after correction :" + correctedSum);
+
+
+    }
 }
 
+public class ElfRulesComparer : IComparer<String>
+{
+    public int Compare(String x, String y)
+    {
+        string filePath = "InputDay5.txt";
+        string fileContent = File.ReadAllText(filePath);
+
+        String[] rulesAndInputs = fileContent.Split("\r\n\r\n");
+
+        String rules = rulesAndInputs[0];
+
+        String[] rulesArray = rules.Split("\r\n");
+        foreach (String rule in rulesArray)
+        {
+            String[] nums = rule.Split("|");
+            String a = nums[0];
+            String b = nums[1];
+            if (x == a && y == b) return -1;
+        }
+
+        return 1;
+    }
+}

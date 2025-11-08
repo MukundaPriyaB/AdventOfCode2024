@@ -13,7 +13,8 @@ public class Solutions
         //NumberOfSafeReports();
         //AdditionOfMultiplicationOutput();
         //GridPatternMatching();
-        ElfRecordOrdering();
+        //ElfRecordOrdering();
+        GuardPath();
 
     }
 
@@ -720,7 +721,168 @@ public class Solutions
 
 
     }
+
+    public static void GuardPath()
+    {
+        string filePath = "InputDay6Sample.txt";
+        string[] lines = File.ReadAllLines(filePath);
+
+
+        string[] firstLineParts = lines[0].Select(c => c.ToString()).ToArray();
+        int numRows = lines.Length;
+        int numCols = firstLineParts.Length;
+
+        string[,] grid1 = new string[numRows, numCols];
+        int initialRowIndex = 0;
+        int initialColumnIndex = 0;
+
+        for (int i = 0; i < numRows; i++)
+        {
+            string[] parts = lines[i].Select(c => c.ToString()).ToArray();
+            for (int j = 0; j < numCols; j++)
+            {
+                grid1[i, j] = parts[j];
+                if (grid1[i, j] == "^")
+                {
+                    initialRowIndex = i;
+                    initialColumnIndex = j;
+                }
+            }
+        }
+        // determine the direction;
+
+        string InitialDirection = "north";
+        string firstTurn = "east";
+        string secondTurn = "south";
+        string thirdTurn = "west";
+
+        bool leftTheGrid = false;
+        int count = 0;
+        string currentDirection = "";
+
+        currentDirection = InitialDirection;
+
+        List<int> returningValues = new List<int>() {initialRowIndex,initialColumnIndex };
+        
+        //return i, j;
+
+        List<String> allPlacesGuardTravelled = new List<String>();
+        String initialPoint = $"{initialRowIndex},{initialColumnIndex}";
+        allPlacesGuardTravelled.Add(initialPoint);
+
+        //return allPlacesGuardTravelled.Count;
+
+        while (true)
+        {
+            for (int i = 0; i < numRows; i++)
+            {
+                for (int j = 0; j < numCols; j++)
+                {
+                    if (i == initialRowIndex && j == initialColumnIndex)
+                    {   // north
+                        if (currentDirection == InitialDirection)
+                        {
+                            if ((i - 1) >=0 && grid1[i - 1, j] != "#")
+                            {
+                                initialRowIndex = initialRowIndex - 1;
+                                //columns same;
+                            }
+
+                            else if ((i - 1) <0 ) { leftTheGrid = true; break; }
+                            else if ((j + 1) < numCols && grid1[i - 1, j] == "#")
+                            {
+                                initialColumnIndex = initialColumnIndex + 1;
+                                //rows = same;
+                                currentDirection = firstTurn;
+                            }
+                            else if ((j + 1) >= numCols && grid1[i - 1, j] == "#") { leftTheGrid = true; break; }
+                        }
+                        //east
+                        else if (currentDirection == firstTurn)
+                        {
+                            if ((j + 1) < numCols && grid1[i, j + 1] != "#")
+                            {
+                                initialColumnIndex = initialColumnIndex + 1;
+                                //rows same;
+                            }
+                            else if ((j + 1) >= numCols) { leftTheGrid = true; break; }
+                            else if ((i + 1) < numRows && grid1[i, j + 1] == "#")
+                            {
+                                initialRowIndex = initialRowIndex + 1;
+                                //columns = same;
+                                currentDirection = secondTurn;
+                            }
+                            else if ((i + 1) >= numRows && grid1[i, j + 1] == "#") { leftTheGrid = true; break; }
+                        }
+                        //south
+                        else if (currentDirection == secondTurn)
+                        {
+                            if ((i + 1) < numRows && grid1[i + 1, j] != "#")
+                            {
+                                initialRowIndex = initialRowIndex + 1;
+                                //columns same;
+                            }
+
+                            else if ((i + 1) >= numRows) { leftTheGrid = true; break; }
+                            else if ((j - 1) >= 0 && grid1[i + 1, j] == "#")
+                            {
+                                initialColumnIndex = initialColumnIndex - 1;
+                                //rows = same;
+                                currentDirection = thirdTurn;
+                            }
+                            else if ((j - 1) <0 && grid1[i + 1, j] == "#") { leftTheGrid = true; break; }
+                        }
+                        //west
+                        else if (currentDirection == thirdTurn)
+                        {
+                            if ((j - 1) >=0 && grid1[i, j - 1] != "#")
+                            {
+                                initialColumnIndex = initialColumnIndex - 1;
+                                //rows same;
+                            }
+                            else if ((j - 1) <0) { leftTheGrid = true; break; }
+                            else if ((i - 1) >=0 && grid1[i, j - 1] == "#")
+                            {
+                                initialRowIndex = initialRowIndex - 1;
+                                //columns = same;
+                                currentDirection = InitialDirection;
+                            }
+                            else if ((i - 1) <0 && grid1[i, j - 1] == "#") { leftTheGrid = true; break; }
+                        }
+                        returningValues.Clear();
+                        returningValues.Add(initialRowIndex);
+                        returningValues.Add(initialColumnIndex);
+                        String coordinates = $"{initialRowIndex},{initialColumnIndex}";
+                        Console.WriteLine(coordinates);
+                        count++;
+                        allPlacesGuardTravelled.Add(coordinates);
+                       // allPlacesGuardTravelled = allPlacesGuardTravelled.GroupBy(x => new { x[0], x[1] }).Select(x => x.FirstOrDefault()).ToList();
+                        //Console.WriteLine(allPlacesGuardTravelled.Any(existingList => existingList.SequenceEqual(returningValues)));
+                        //if (!(allPlacesGuardTravelled.Any(existingList => existingList.SequenceEqual(returningValues))))
+                        //{
+                        //    Console.WriteLine(returningValues[0] + " inside if condition " + returningValues[1]);
+                        //    allPlacesGuardTravelled.Add(returningValues);
+                        //}
+                    }
+
+                }
+                if (leftTheGrid)
+                {
+                    break;
+                }
+            }
+            if (leftTheGrid)
+            {
+                break;
+            }
+        }
+
+        Console.WriteLine("the count non distinct :" + count);
+        Console.WriteLine("the count is :" + allPlacesGuardTravelled.Distinct().Count());
+
+    }
 }
+
 
 public class ElfRulesComparer : IComparer<String>
 {

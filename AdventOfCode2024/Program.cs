@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -750,7 +751,41 @@ public class Solutions
             }
         }
         // determine the direction;
+        (List<string> allPlacesGuardTravelled , bool loop)= NextStepIteration(grid1, initialRowIndex,initialColumnIndex);
+        Console.WriteLine("the count is :" + allPlacesGuardTravelled.Distinct().Count());
 
+        int countLoops = 0;
+
+        List<string> obstructions = new List<string>();
+
+        foreach (string guardPosition in allPlacesGuardTravelled.Distinct())
+        {
+            string[] input = guardPosition.Split(',');
+            
+            int i = Convert.ToInt32(input[0]);
+            
+            int j = Convert.ToInt32(input[1]);
+            grid1[i, j] = "#";
+
+            (List<string> allPlacesGuardTravelled2, bool isALoop) = NextStepIteration(grid1, initialRowIndex, initialColumnIndex);
+            if (isALoop)
+            {
+                obstructions.Add($"{i},{j}");
+                Console.WriteLine($"{i},{j}");
+                countLoops++;
+            }
+        }
+        
+        Console.WriteLine("number of possible loops "+ countLoops);
+
+
+    }
+
+    public static (List<string> outputList, bool isALoop) NextStepIteration(string[,] grid1, int initialRowIndex, int initialColumnIndex)
+    {
+
+        int numRows = grid1.GetLength(0);
+        int numCols = grid1.GetLength(1);
         string InitialDirection = "north";
         string firstTurn = "east";
         string secondTurn = "south";
@@ -760,16 +795,21 @@ public class Solutions
         int count = 0;
         string currentDirection = "";
 
+        bool isALoop = false;
+
         currentDirection = InitialDirection;
 
-        List<int> returningValues = new List<int>() {initialRowIndex,initialColumnIndex };
-        
+        List<int> returningValues = new List<int>() { initialRowIndex, initialColumnIndex };
+
         //return i, j;
 
         List<String> allPlacesGuardTravelled = new List<String>();
         String initialPoint = $"{initialRowIndex},{initialColumnIndex}";
         allPlacesGuardTravelled.Add(initialPoint);
 
+        List<String> allPlacesGuardTravelledWithDirections = new List<String>();
+
+        
         //return allPlacesGuardTravelled.Count;
 
         while (true)
@@ -782,13 +822,13 @@ public class Solutions
                     {   // north
                         if (currentDirection == InitialDirection)
                         {
-                            if ((i - 1) >=0 && grid1[i - 1, j] != "#")
+                            if ((i - 1) >= 0 && grid1[i - 1, j] != "#")
                             {
                                 initialRowIndex = initialRowIndex - 1;
                                 //columns same;
                             }
 
-                            else if ((i - 1) <0 ) { leftTheGrid = true; break; }
+                            else if ((i - 1) < 0) { leftTheGrid = true; break; }
                             else if ((j + 1) < numCols && grid1[i - 1, j] == "#")
                             {
                                 initialColumnIndex = initialColumnIndex + 1;
@@ -830,44 +870,53 @@ public class Solutions
                                 //rows = same;
                                 currentDirection = thirdTurn;
                             }
-                            else if ((j - 1) <0 && grid1[i + 1, j] == "#") { leftTheGrid = true; break; }
+                            else if ((j - 1) < 0 && grid1[i + 1, j] == "#") { leftTheGrid = true; break; }
                         }
                         //west
                         else if (currentDirection == thirdTurn)
                         {
-                            if ((j - 1) >=0 && grid1[i, j - 1] != "#")
+                            if ((j - 1) >= 0 && grid1[i, j - 1] != "#")
                             {
                                 initialColumnIndex = initialColumnIndex - 1;
                                 //rows same;
                             }
-                            else if ((j - 1) <0) { leftTheGrid = true; break; }
-                            else if ((i - 1) >=0 && grid1[i, j - 1] == "#")
+                            else if ((j - 1) < 0) { leftTheGrid = true; break; }
+                            else if ((i - 1) >= 0 && grid1[i, j - 1] == "#")
                             {
                                 initialRowIndex = initialRowIndex - 1;
                                 //columns = same;
                                 currentDirection = InitialDirection;
                             }
-                            else if ((i - 1) <0 && grid1[i, j - 1] == "#") { leftTheGrid = true; break; }
+                            else if ((i - 1) < 0 && grid1[i, j - 1] == "#") { leftTheGrid = true; break; }
                         }
+
                         returningValues.Clear();
                         returningValues.Add(initialRowIndex);
                         returningValues.Add(initialColumnIndex);
                         String coordinates = $"{initialRowIndex},{initialColumnIndex}";
-                        Console.WriteLine(coordinates);
+                        //Console.WriteLine(coordinates);
                         count++;
                         allPlacesGuardTravelled.Add(coordinates);
-                       // allPlacesGuardTravelled = allPlacesGuardTravelled.GroupBy(x => new { x[0], x[1] }).Select(x => x.FirstOrDefault()).ToList();
-                        //Console.WriteLine(allPlacesGuardTravelled.Any(existingList => existingList.SequenceEqual(returningValues)));
-                        //if (!(allPlacesGuardTravelled.Any(existingList => existingList.SequenceEqual(returningValues))))
-                        //{
-                        //    Console.WriteLine(returningValues[0] + " inside if condition " + returningValues[1]);
-                        //    allPlacesGuardTravelled.Add(returningValues);
-                        //}
+                        string coordinatesAndDirection = $"{coordinates},{currentDirection}";
+                        if (allPlacesGuardTravelledWithDirections.Count > 0)
+                        {
+                            //Console.WriteLine("in here before function call");
+                            if (CheckIfLoop(allPlacesGuardTravelledWithDirections, coordinatesAndDirection))
+                            {
+                                Console.WriteLine("the coordinates and direction: "+coordinatesAndDirection);
+                                leftTheGrid = true;
+                                isALoop = true;
+                                break;
+                            }
+                        }
+                        allPlacesGuardTravelledWithDirections.Add(coordinatesAndDirection);
+
                     }
 
                 }
                 if (leftTheGrid)
                 {
+                   // Console.WriteLine(isALoop);
                     break;
                 }
             }
@@ -876,11 +925,19 @@ public class Solutions
                 break;
             }
         }
-
-        Console.WriteLine("the count non distinct :" + count);
-        Console.WriteLine("the count is :" + allPlacesGuardTravelled.Distinct().Count());
-
+       // Console.WriteLine("the count non distinct :" + count);
+        
+        return (allPlacesGuardTravelled, isALoop);
+        
     }
+
+    public static bool CheckIfLoop(List<string> allPlacesGuardTravelledWithDirections, string coordinatesAndDirection)
+    {
+        bool isPresent = allPlacesGuardTravelledWithDirections.Contains(coordinatesAndDirection);
+        return isPresent;
+    }
+
+
 }
 
 
